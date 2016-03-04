@@ -16,7 +16,6 @@ Task.create(name: 'Dance in the rain', complete: true)
 7. 
 
 rails c
-Running via Spring preloader in process 22705
 Loading development environment (Rails 4.2.5.2)
 2.3.0 :001 > Task.find(:all, conditions: ['complete = ?, false])
 2.3.0 :002'> ^C
@@ -31,6 +30,19 @@ ActiveRecord::RecordNotFound: Couldn't find all Tasks with 'id': (all, {:conditi
  Did you mean?  find_or_create_by
 
 
+Dynamic attribute-based finders
+
+$ rails c
+Loading development environment (Rails 4.2.5.2)
+2.3.0 :001 > task = Task.find_by(complete: false)
+  Task Load (0.3ms)  SELECT  "tasks".* FROM "tasks" WHERE "tasks"."complete" = ? LIMIT 1  [["complete", "f"]]
+ => #<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56"> 
+ 
+ task.class
+ => Task(id: integer, name: string, complete: boolean, created_at: datetime, updated_at: datetime)
+ 
+ Only one record is retrieved.
+ 
   incomplete_tasks = Task.where(complete: false)
   Task Load (2.1ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."complete" = ?  [["complete", "f"]]
  => #<ActiveRecord::Relation [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">, #<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">]> 
@@ -45,6 +57,12 @@ ActiveRecord::RecordNotFound: Couldn't find all Tasks with 'id': (all, {:conditi
  ArgumentError: wrong number of arguments (given 2, expected 1)
  
  
+  task = Task.find_by(complete: false, order: 'created_at DESC')
+   Task Load (0.7ms)  SELECT  "tasks".* FROM "tasks" WHERE "tasks"."complete" = ? AND "tasks"."order" = 'created_at DESC' LIMIT 1  [["complete", "f"]]
+ ActiveRecord::StatementInvalid: SQLite3::SQLException: no such column: tasks.order: SELECT  "tasks".* FROM "tasks" WHERE "tasks"."complete" = ? AND "tasks"."order" = 'created_at DESC' LIMIT 1
+ 
+ 
+ 
  last_incomplete = Task.where(complete: false).order('created_at DESC').first
   Task Load (0.3ms)  SELECT  "tasks".* FROM "tasks" WHERE "tasks"."complete" = ?  ORDER BY created_at DESC LIMIT 1  [["complete", "f"]]
  => #<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">
@@ -56,4 +74,5 @@ ActiveRecord::RecordNotFound: Couldn't find all Tasks with 'id': (all, {:conditi
  => #<ActiveRecord::Relation [#<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">, #<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">]>
   
   
+  http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M001024
  
