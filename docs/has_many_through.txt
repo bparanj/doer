@@ -1,0 +1,85 @@
+1. rails g scaffold project name:string
+2. 
+
+class Project < ActiveRecord::Base
+  has_many :tasks
+end
+
+3.
+
+class Task < ActiveRecord::Base
+  belongs_to :project
+end
+
+4.
+
+rails g migration add_project_id_to_tasks
+
+class AddProjectIdToTasks < ActiveRecord::Migration
+  def change
+    add_column :tasks, :project_id, :integer
+  end
+end
+
+5.
+
+rake db:migrate
+
+
+6. seeds.rb
+
+wealthy = Project.create(name: 'Wealth Building')
+wealthy.tasks.create(name: 'Get rich quick', complete: false)
+wealthy.tasks.create(name: 'Write a book', complete: true)
+
+happy = Project.create(name: 'Be Happy')
+happy.tasks.create(name: 'Buy a puppy', complete: false)
+happy.tasks.create(name: 'Dance in the rain', complete: true)
+
+7. Delete development.sqlite3 
+
+rake db:seed
+
+8. 
+
+rails c
+Running via Spring preloader in process 32491
+Loading development environment (Rails 4.2.5.2)
+ > Project.count
+   (0.1ms)  SELECT COUNT(*) FROM "projects"
+ => 2 
+ > Task.count
+   (0.1ms)  SELECT COUNT(*) FROM "tasks"
+ => 4 
+ > Task.find(:all, :conditions => ['project_id = ? AND complete = ?', 1, false])
+  Task Load (0.2ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."id" IN (NULL, NULL)
+  
+ x = Task.where(project_id: 1).where(complete: false)
+  Task Load (0.3ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."project_id" = ? AND "tasks"."complete" = ?  [["project_id", 1], ["complete", "f"]]
+ => #<ActiveRecord::Relation [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]> 
+ 
+ 
+ >   p.tasks.where(complete: false).to_a
+  Task Load (0.1ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."project_id" = ? AND "tasks"."complete" = ?  [["project_id", 1], ["complete", "f"]]
+ => [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>] 
+ 
+ 
+  > p = Project.find 1
+   Project Load (0.2ms)  SELECT  "projects".* FROM "projects" WHERE "projects"."id" = ? LIMIT 1  [["id", 1]]
+  => #<Project id: 1, name: "Wealth Building", created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20"> 
+  > p.tasks.where(complete: false)
+   Task Load (0.1ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."project_id" = ? AND "tasks"."complete" = ?  [["project_id", 1], ["complete", "f"]]
+  => #<ActiveRecord::AssociationRelation [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]> 
+
+ 
+ 
+ > p.tasks.find_all_by_complete(false)
+ NoMethodError:   Task Load (0.2ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."project_id" = ?  [["project_id", 1]]
+ undefined method `find_all_by_complete' for #<Task::ActiveRecord_Associations_CollectionProxy:0x007fe597001fe8>
+ Did you mean?  find_or_create_by
+ 
+ 
+ Find Through Association
+ 
+ http://railscasts.com/episodes/3-find-through-association?view=comments
+ 

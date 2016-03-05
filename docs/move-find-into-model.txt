@@ -1,0 +1,99 @@
+1.
+
+
+ > Task.where(complete: false).order('created_at DESC')
+  Task Load (0.2ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."complete" = ?  ORDER BY created_at DESC  [["complete", "f"]]
+ => #<ActiveRecord::Relation [#<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 2>, #<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]> 
+ 
+ 
+ > Task.where(complete: false).order('id DESC')
+   Task Load (0.2ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."complete" = ?  ORDER BY id DESC  [["complete", "f"]]
+  => #<ActiveRecord::Relation [#<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 2>, #<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]>
+  
+  > Task.where(complete: false)
+   Task Load (0.2ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."complete" = ?  [["complete", "f"]]
+  => #<ActiveRecord::Relation [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>, #<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 2>]>
+  
+  
+ 2.
+ 
+ p = Project.find 1
+  Project Load (0.1ms)  SELECT  "projects".* FROM "projects" WHERE "projects"."id" = ? LIMIT 1  [["id", 1]]
+ => #<Project id: 1, name: "Wealth Building", created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20"> 
+ 
+ p.tasks.where(complete: false).order('id DESC')
+  Task Load (0.2ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."project_id" = ? AND "tasks"."complete" = ?  ORDER BY id DESC  [["project_id", 1], ["complete", "f"]]
+ => #<ActiveRecord::AssociationRelation [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]>
+ 
+ 3.
+ 
+ > p.tasks.where(complete: false).order('id DESC').all
+  Task Load (0.1ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."project_id" = ? AND "tasks"."complete" = ?  ORDER BY id DESC  [["project_id", 1], ["complete", "f"]]
+ => #<ActiveRecord::AssociationRelation [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]>
+ 
+ 
+ > p.tasks.where(complete: false).order('id DESC').to_a
+  Task Load (0.1ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."project_id" = ? AND "tasks"."complete" = ?  ORDER BY id DESC  [["project_id", 1], ["complete", "f"]]
+ => [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]
+ 
+ 4.
+ 
+ In Task:
+ 
+ class Task < ActiveRecord::Base
+   belongs_to :project
+  
+   def self.find_incomplete
+     Task.where(complete: false).order('id DESC')
+   end
+ end
+ 
+ 
+ In tasks controller:
+ 
+ def index
+   @tasks = Task.find_incomplete
+ end
+
+ def show
+   @project = Project.find(params[:id])
+   @tasks = @project.tasks.find_incomplete
+ end
+ 
+5.
+
+class Task < ActiveRecord::Base
+  belongs_to :project
+  
+  scope :incomplete, -> { where complete: false }
+  scope :sorted, -> { order('id DESC') }
+
+  def self.find_incomplete
+    Task.where(complete: false).order('id DESC')
+  end
+end
+
+6.
+
+$ rails c
+Loading development environment (Rails 4.2.5.2)
+ > Task.incomplete
+  Task Load (0.3ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."complete" = ?  [["complete", "f"]]
+ => #<ActiveRecord::Relation [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>, #<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 2>]> 
+ > Task.sorted
+  Task Load (0.1ms)  SELECT "tasks".* FROM "tasks"  ORDER BY id DESC
+ => #<ActiveRecord::Relation [#<Task id: 4, name: "Dance in the rain", complete: true, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 2>, #<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 2>, #<Task id: 2, name: "Write a book", complete: true, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>, #<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]> 
+ 
+Merging of scopes
+
+ Just like where clauses scopes are merged using AND conditions. We can mix and match scope and where conditions and the final sql will have all conditions joined with AND.
+
+ 
+ > Task.incomplete.sorted
+  Task Load (0.2ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."complete" = ?  ORDER BY id DESC  [["complete", "f"]]
+ => #<ActiveRecord::Relation [#<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 2>, #<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 23:50:20", updated_at: "2016-03-04 23:50:20", project_id: 1>]> 
+
+
+http://railscasts.com/episodes/4-move-find-into-model?view=comments
+
+ 

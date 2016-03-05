@@ -101,4 +101,6 @@ Loading development environment (Rails 4.2.5.2)
   NoMethodError: undefined method `find_all_by_complete' for #<Class:0x007fe592ba05e8>
   
   http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M001024
+  
+  http://railscasts.com/episodes/2-dynamic-find-by-methods?view=comments
  

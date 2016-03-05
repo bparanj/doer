@@ -4,12 +4,14 @@ class TasksController < ApplicationController
   # GET /tasks
   # GET /tasks.json
   def index
-    @tasks = Task.all
+    @tasks = Task.find_incomplete
   end
 
   # GET /tasks/1
   # GET /tasks/1.json
   def show
+    @project = Project.find(params[:id])
+    @tasks = @project.tasks.find_incomplete
   end
 
   # GET /tasks/new
