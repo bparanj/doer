@@ -1,0 +1,119 @@
+Objective - Describe the business concept and role that each class represents in the domain model
+
+Introduction
+ 
+Data dictionary is used to describe the business concept and role that each class represents in the domain model. It is part of the Glossary.
+ 
+The data dictionary should include terms that are ambiguous or required to understand the system or its data. Each class should represent a single abstraction. If the class has two different definitions, it is really two abstractions given a common name. Each abstraction should be given a different name and made a separate class.
+
+Discussion about how to create a domain model itself could become a separate book. For a brief overview, here are the steps that you can follow to create a domain model. 
+
+Step 1:
+
+Interview the customers and end users to learn about the particular domain that you have to model. Find out how they want to use the system. Focus on business processes and not on data. Focus on gathering information about the domain not on requirements. Listen and take notes. There is no need to be formal at this stage.
+
+Source for domain objects:
+
+a) Customer's organization charts.
+b) Departments and employees having well-defined roles and responsibilities supporting the business processes. These are the roles in your domain model.
+
+Step 2:
+
+Identify packages by grouping items that are independent of each other.
+
+Step 3:
+
+For each business process, identify participating objects and assign responsibilities.
+
+Step 4:
+
+Examine each responsibility and see if any other information and operations are needed. When you discover the new 
+information and operations, check to see if it can be allocated to one of the existing domain objects. If this is not possible then you have found a new domain object, group all the related data and operations together in this object. If you are stuck get the help of the domain expert to give a good name to this new object.
+
+Step 5:
+
+Testing the Domain Object Model
+
+Create test cases from the business functions and run them against your domain model. Note down the trouble/vague areas and focus on these during the next iteration of steps 1 through 4.
+
+REMEMBER: Our aim is not to come up with a perfect domain model but it must be a useful and effective communication tool and a good starting point for the design phase. Stop the iteration when you find that the test result shows that the domain model does solve the problems that we were aiming to resolve.
+
+QUICK AND DIRTY METHOD:
+
+If your domain has a RDBMS then you can approach the DB admin and use tools that can take the ER model and convert them into  a business domain model. Remember this bottom-up approach to domain modeling will not result in a good domain model. 
+
+Therefore use this model as your first stab at creating the domain model and iterate through steps 1 to 4 till the testing  condition passes. Guideline - Aim for a simple domain model that will solve the given problem. After implementation you can go back and change the domain model to include the new information that you will discover. If you are interested in learning  more, refer the book: Domain-Driven Design: Tackling Complexity in the Heart of Software by Eric Evans 
+ 
+Guidelines to Create a Domain Model
+ 
+The domain model provides a visual representation of the real-world conceptual classes in a domain of interest. These are not software components or software classes.  The domain model may show associations and / or attributes of conceptual classes. The domain model is also referred to as the conceptual, domain object or analysis object model. Each class represents an abstraction that focuses on details of interest and ignores everything else.
+ 
+Conceptual classes do not have responsibilities unless they represent a human worker who has assumed a role (e.g., Pilot).  A conceptual class is an idea, thing or object and has:
+A symbol - a name or image that represents the class
+An intention – its definition or purpose for existence in the model
+An extension – the set of examples where the class is applicable
+Conceptual classes need not have attributes.  They may play a behavioral role rather than an information role. Prefer over specifying the domain model with fine-grained conceptual classes to omitting classes, but do not include things that do not exist or are not of interest. If a concept is not thought of as a number or text in the real world, then it is probably a conceptual class rather than an attribute.
+ 
+Use cases and conceptual class category lists provide the inspiration for conceptual classes. Use the vocabulary of the domain when naming conceptual classes. Specification or description classes are included when information about a concept must be kept separate from the concept itself and if it is an important concept in the problem domain.
+
+Example
+
+Intention is the term that describes the business concept of a class in a domain model. The domain model shows conceptual classes that provide the vocabulary of the domain. Each conceptual class can be thought of in terms of its:
+Symbol - The words or images used to represent it, such as its name or UML notation, e.g., a Theatre Ticket.
+Intention - A textual definition describing its business concept, the real world thing it represents, e.g., "A Theatre Ticket represents the right to attend a performance in a particular theatre. It has a seat number, a date, and a time."
+Extension - The set of all the things it applies to, e.g., all the Theatre Tickets issued by a particular Theatre. 
+Role Names
+
+Every class plays specific role when it participates in an association. A role is just a hat the class wears that can be seen by the class at the other end of the association. In figure, a man playing the role of husband is associated with a woman. A woman playing the role of wife is associated with a man. 
+
+Role names can be used to describe association and aggregation relationships, either with or instead of association names.  The role name should be used as the reference attribute name for code generation.
+
+
+The CASE tools can generate code for the above model, it would look like as shown below:
+class Man {
+    private Woman wife;
+....
+
+}
+
+The figure shows Woman with a role name of "wife". When generating code, CASE tools use role names as variable names for reference attributes. If you don't specify the role name then the name of the target class becomes the name of the association end. In the example above, if the role name was not specified then the Woman end of the association from Man would be called as woman. This gives you the ability to trace requirements both forward and backward through OOAD artifacts. 
+
+A link attribute attaches properties to an association. It is used when attributes belong to neither of the classes involved in the association, but rather to the association itself. Make the link an association object and make the proposed attribute one of its attributes. For example, given Husband and Wife classes, the date of marriage attribute would be declared in a Marriage class.
+
+
+Case Study 
+
+Given that only Platinum members get WineTastingSchedule, we would like to have a means for determining which objects participate, and which do not. 
+
+In the design above, we can say that the role platinum is played by the Member class.  The role name “platinum” partitions the the Member class and it restricts the objects which participate in the association between the Member and WineTastingSchedule classes. The multiplicity at WineTastingSchedule is optional. Based on the member type, only the Platinum members get a WineTastingSchedule.
+
+In the design above, WineTastingSchedule is only associated with the PlatinumMember class. Every Platinum member gets a WineTastingSchedule.
+
+Effective Use of Inheritance
+ 
+If inheritance is used in a proper way, it can reduce the code duplication and enhance code reuse. The following conditions must be satisfied for proper use of inheritance:
+Inheritance should be used only when a derived class is a specialized kind of base class. Since the base class places constraints on the behavior of the derived classes, if the derived class cannot operate within the constraints then inheritance cannot be used.
+Apply Liskov Substitution Principle (LSP). We must be able to substitute the subclasses wherever we can use base classes and the user should not find any difference. The means that all the methods defined in the base class should have the same meaning when they are used in any of the derived classes.
+Consider a base class of Toy and derived classes of SpiderManToy, SuperManToy and BatManToy. We should be able to invoke any of the methods derived from Toy on any of Toy's subtypes without knowing about any specific subtype of Toy. Following LSP allows us to manage complexity since we can ignore the details and focus on the generic attributes of an object.
+ 
+If a developer has to know the details of the subclass in order to use it then we have increased the complexity instead of reducing it. For example, if a developer has to think as: "If I call the getAccountBalance() method on RegularCustomer it returns the amount of cash that the customer has on hand but if I call getAccountBalance() on DefaultCustomer I have to make the result negative because the customer does not have any cash on hand and has accumulated charges in teh account that is owed to the bank". LSP states that DefaultCustomer should not inherit from Customer base class because the semantics of the getBalance() method in DefaultCustomer is different from the semantics of the getBalance() method in Customer.
+Inherit only what you need. A derived class can inherit interfaces only or implementation and interface.
+Let us consider the scenario of inheriting interface only. A Java class implementing an interface is an example of interface only inheritance. It is called as sub typing. Whenever the LSP principle is satisfied by a class, it is said to be a sub-type. This can also be accomplished by extending an abstract class with no default implementation for any methods. The intention might be to inherit only the attributes and not the implementation.
+ 
+In interface and implementation inheritance, the derived class inherits the interface and a default implementation (could be allowed to override)
+ 
+If you want to use the implementation of a class but do not want to inherit the interface then use containment (by delegation) rather than inheritance. The class that uses delegation could be a wrapper around the object which does the actual work.
+ 
+Inheritance when properly used minimizes the code duplication as well as complexity.
+ 
+Inheritance Vs Delegation
+ 
+Delegation can be used as an alternative to inheritance. It is the ability of an object to fulfill a responsibility by issuing a message to another object in response to the receipt of a message. It can be implemented with an association or aggregation to another object. An operation on the first object invokes an operation on the second object to accomplish its work.
+ 
+Apart from the above inheritance test, we can use the following design guidelines to decide when to use inheritance over delegation. These guidelines will be explained in more detail later in this chapter.
+
+Data	Behavior	Design Guideline
+yes	no	Create a common object that the classes can contain (delegation)
+no	yes	Inherit the classes from a common base class that implements the common behavior
+yes	yes	Inherit from a common base class that defines the common data and methods
+

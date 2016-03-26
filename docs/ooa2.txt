@@ -1,0 +1,123 @@
+Objective - Determine when a new class is needed
+
+Abstraction
+ 
+To quote Booch in Object-Oriented Analysis and Design with Applications: “An abstraction denotes the essential characteristics of an object that distinguish it from all other kinds of objects and thus provide crisply defined conceptual boundaries, relative to the perspective of the viewer.”
+ 
+The term perspective of the viewer needs an explanation. Let us consider a House object, when a banker sees this house, he thinks in terms of the value of the property, opportunity for appreciation, etc whereas when a decorator views it, he thinks in terms of what color the house should be painted, total area to be painted, etc. The same object House can be viewed from different perspectives and can lead to entirely different abstractions by different people.
+
+Booch, Fairsmith, Henderson-Sellers define abstraction as "Any model that includes the most important, essential, or distinguishing aspects of something while suppressing or ignoring less important, immaterial, or diversionary details".
+
+Coad, Fairsmith, Henderson-Sellers, Rumbaugh define abstraction as "The cognitive tool for rationalizing the world by considering only those details necessary for the current purpose".
+
+So, abstraction is about what details we choose to emphasize and what details we choose to ignore. What we choose to emphasize is dictated by the application. It simplifies the things that we look at in the real world. For example, a chair can be made up of different kinds of material, height adjusting knobs, reclining adjustment knobs etc. If every time we looked at the chair, if we had to deal with what material it is made up of, how the height adjustment knobs are designed and other irrelevant details related to our purpose using a chair to sit, our brains will be exhausted. So, the abstraction process simplifies things and allows us to manage complexity during problem solving process.
+ 
+Interface of a Class and its Role in Abstraction
+ 
+The interface of a class should offer a set of methods that belong together. Let us consider a class that represents Ticket. It would contain data describing the ticket, date of event, name of the event, seat number, and so on. It would offer services to initialize and use ticket. Here is the code showing how it looks.
+ 
+public class Ticket {
+   public  String seatID;
+   public  Date eventDate;
+   public  String eventName;
+ 
+   public Ticket(String seatID, Date event Date, String eventName)        {...}
+ 
+   public String getSeatID() {}
+   public Date getEventDate{}
+   public String getEventName{}
+}
+ 
+ 
+The ticket object cannot be modified after it is created because the values of the attribute cannot be changed. The interface of the class has methods that provide access to the attributes that are relevant to the abstraction that the Ticket object represents. This class might have additional methods and data to support these services but the clients using this class don't need to know about these implementation details. For example, the seatID could be accessed from a relational database. This is an example of a well defined interface with good abstraction because every method in the interface is focused on expressing a single concept.
+ 
+Conversely, an example for a class with poor cohesion would be a class called MegaBitePizzaAndAutoService which consists of unrelated methods such as deliveryTotal(), dineInTotal(), oilChangeTotal() etc. To correct the mistake all operations related to auto service can be moved to a new class called AutoService. The public methods are the basis for evaluating class abstraction. This does not mean that methods private to the class can have poor abstraction. The private methods should also be designed with good abstraction in mind.
+
+Guidelines for Creating Class Interfaces
+ 
+1: Each class should implement one and only one abstraction.
+ 
+If a class implements more than one abstraction or if we cannot determine what abstraction the class implements, then the class must be split into one or more well defined abstraction.
+ 
+The following example shows a class with inconsistent interface. It is inconsistent because level of abstraction is not uniform.
+ 
+public class DanceTeam extends ArrayList {
+ 
+  public void addDancer(Dancer aDancer) {...};
+  public void removeDancer(Dancer aDancer) {...} ;
+ 
+  public Dancer getFirstItem() {...};
+  public Dancer getLastItem() {...};
+  public Dancer getNextItemInList () {...};
+ 
+}
+ 
+Java Example of a Class Interface with Mixed Levels of Abstraction
+ 
+The abstraction of the first two methods is at the "Dancer" level. The abstraction of the last three methods is at the "List" level. The DanceTeam class is capturing two abstraction: a dancer and a Collection utility. The ArrayList class is a utility class found in the Java's java.util package. The fact that we have chosen a particular collection class to implement the functionality should be hidden from clients. This gives us the flexibility of changing the implementation where we could use a different collection utility class which for example gives us better performance under multi-threaded environment.
+ 
+The following code shows the class after it has been refactored to improve its abstraction.
+ 
+public class DanceTeam  {
+  public void addDancer(Dancer aDancer) {...};
+  public void removeDancer(Dancer aDancer) {...};
+ 
+  public Dancer getFirstDancer() {...};
+  public Dancer getLastDancer() {...};
+  public Dancer getNextDancer() {...};
+ 
+  private Collection dancerList; <----- Collection class now is hidden.
+ 
+}
+ 
+In the code shown above, the abstraction of all the methods is at the "Dancer" level. We now have the variable that is of type Collection interface. We could implement the dancerList as ArrayList, Vector or any other type of collection class. It is actually a design flaw for the DanceTeam to inherit from the ArrayList class. It fails the inheritance test question: Is DanceTeam a type of ArrayList?
+ 
+If the abstraction of the DanceTeam object requires searching and sorting then it should be made explicit by making it part of the class interface.
+ 
+2: Have a clear understanding of the abstraction.
+ 
+Sometimes there might be two classes representing two similar abstractions. Choosing the right class depends on clear understanding of the abstraction it represents.
+ 
+During development if two classes are very similar then having a clear understanding of the abstraction will help us to come up with the correct interface for the class. Data dictionary helps us to clarify our understanding.
+ 
+3: Refactor unrelated information to a new class.
+ 
+If you find that roughly half of the methods work with half of the class's data and the other half of methods work with the remaining other half of the data then you actually have two classes combined into one. Split the class into two separate classes. This leads us to the rule: Most of the methods defined for a class should be using most of its attributes most of the time.
+ 
+4: Analyze classes that has more than approximately 7 attributes.
+ 
+It has been discovered that 7 + 2 is the number of things an individual can remember while performing other tasks. If a class exceeds the 7 + 2 limit then check if the class can be decomposed into multiple smaller classes. If the attributes are primitive data types like integers and strings then you set the limit as 9, if it is complex objects then the limit is 7.
+
+List of Reasons to Create a New Class
+ 
+The following list shows good reasons to create a new class:
+ 
+1. Create a class to represent each real-world object. This object must be within the scope of the system that we are modeling.
+ 
+2. Create a class to model abstract objects. Abstract object is not concrete real-world object. It provides an abstraction of other concrete objects. For example, Chips and Fruits really exist in the real world whereas Food is an abstraction of other specific foods. If I ask you to point me to a food, you only point to a specific type of food such as apple, orange etc.
+ 
+So if you consider a Food abstract class and various sub-classes such as Cake, Orange etc. There can be no instance of Food class. It is abstract. We are modeling the real world and abstraction is one way by which we deal with complexity. We can only create instances of the sub-classes Cake, Orange etc. These instances will be named birthDayCake, anniversaryCake etc. The sub-classes are concrete and you can create instances.
+ 
+3. Create a class to reduce complexity. This is the most important reason to create a class. Java Server Faces API is a good example. JSF API has made it simple to write GUI code for server based applications by hiding implementation details such as communication related details from the client and server.
+ 
+4. Create a class to isolate complexity. For instance if we have to deal with complicated algorithms, it will be easier to locate and fix bugs if it is localized within a class. It will also be easier to replace algorithms.
+ 
+5. Create a class to minimize the impact of changes. Separate the areas that are most likely to change. Our aim is to reduce the number of classes that has to be modified when changes occur.
+ 
+6. Analyze parameter passing to check if a new class is required. Minimize passing data to several objects. This will require reorganizing the class structure. If a parameter is being passed to many methods it may be time to refactor so that the parameter becomes the attribute of the new class and all the methods which used it as a parameter now becomes the interface of the new class. The method now can access the attributes declared within the new class instead of receiving it as a parameter.
+ 
+7. Create new class to centralize control of tasks. You might be accessing a directory server, database or other external source of data. Creating a class that is responsible for the external data access makes it easier to make changes.
+ 
+8. Create a new class to enable re-use. We might refactor existing classes so that it could be re-used in a different application. The classes that are easy to design for re-use are utility classes such as Collection classes, JNDI connection pooling classes etc. User interface related classes can also be easily designed for re-use if we architect the system to use an architectural pattern like MVC.
+ 
+9. Create a new class to represent one abstraction. A class that represents multiple abstractions should be split into multiple classes until each one represents a single abstraction. Keep related data and behavior in one place.  Two classes related by a one-to-one relationship can be combined to form a single class only when it results in a single abstraction. Spin off non-related information within a single class into another class.
+ 
+10. A data item needs additional data or behavior. A data item contained in a class that requires additional behavior or additional data of its own should be made into its own class.
+ 
+11. An array contains certain elements that mean different things. Each element of the array should become a field in a new class. This eliminates the need for conventions about the meaning of each array element. Each field can be named appropriately for its purpose.
+ 
+12. A class has a numeric type code that does not affect its behavior. A numeric type code that does not affect a class's behavior should be made into its own class so that the compiler can do type checking on it. This has an advantage over numbers because you can ensure that only valid codes can be constructed, reducing bugs. [Fowler - Refactoring ]
+
+13. When we find that a class has two different definitions during OO analysis, split the class into two different classes having different names. Each class should represent a single abstraction. If the class has two different definitions, it is really two abstractions given a common name. Each abstraction should be given a different name and made a separate class. These definitions will be included in the Glossary.
+
+ 

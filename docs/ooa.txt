@@ -1,0 +1,142 @@
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+This has been updated to Rails 5 as a blog post. []( '')
+
+
+
+
+
+ 
+
+ 
+ 
+ 
+
+
+ 
+
+
+
+
+
+ 
+ 
+
+Finding Operations from the Static Model
+
+From the specification perspective the associations in the class diagram represent the responsibilities of the participating classes. Following are the types of operations that we have to consider during this activity.
+
+1. Setting the value of an attribute.
+2. Accessing the value of an attribute.
+3. Checking the value of any derived attribute.
+4. Creating relationships.
+5. Querying an association.
+6. Setting an association.
+7. Accessing all objects that have contains relationship.
+
+Setting Attribute Values
+
+For each attribute in a class we must decide whether we need an operation that sets the attribute’s value. This decision is based on whether we should allow a client to change the attribute or not. For example, once we create an order number during the purchase of an item in a restaurant, we should not change it. Therefore, when the Order object is created, the order number is initialized and we do not provide a method to set the order number. In UML this constraint is called as frozen. An attribute which is frozen cannot change its value during the lifetime of the object in which it is declared.
+
+Consider the Guest class in Hotel Guest Management System. From now we will use the abbreviation HGMS to refer to this system. The marketing department is taking a survey to target its customer effectively. The result of this survey produces customer profile. The profile consists of answers to questions like their age, sex, number of children, income range etc. In this example, the attribute sex cannot be changed and we do not define any setter method for it. You might ask: What happens if a careless mistake was made? This is assumed to be a rare case, if this happens then we have to delete the object and create a new one with the correct attributes from the beginning.
+
+Syntax:
+ 
+void setAttribute(type : attribute); or
+boolean setAttribute(type : attribute)
+ 
+Accessing the Value of an Attribute
+
+Attribute values are accessed by defining accessors. We must minimize the getters. Because the class must operate on its data and provide services and not act as a data holder. There are certain situations where a class can be a data holder, ValueObject is an example in Java.
+
+Checking Derived Attributes
+
+If the value of an attribute is calculated from the values of other attributes in the object then it is called as derived attribute. Therefore, we cannot set the value of a derived attribute. It may be required to allow clients to access the derived attributes. If so, we can define accessor for this purpose. For example we can calculate the number of days over due on an invoice by operating on the invoice due date. The value may either be calculated everytime it is accessed or cached for faster retrieval. Decision must be made based on the time vs space trade off requirements.
+
+Creating Associations
+
+Guest can stay in one room only. Either 0 or 2 guests can occupy room. Let us now consider the scenario where the room is vacant. The HGMS needs this object in order to set the value of the Boolean attribute isClean. After the housekeeper has finished cleaning the room, the list is given to the front desk clerk who updates the system using the user interface to indicate which rooms are clean.
+ 
+When a guest checks in to a room, the association between the Guest object and Room object must be created. We will put an operation in the Room class that allows us to set the guest name, namely, setGuestName(String : name). For the purpose of illustrating the concept we will assume guest names are unique. Later we will see how to model this without making this assumption during our discussion on qualified association.
+
+Sometimes, the associations will be created when we create the object. In the example, when we create the Performance object we pass in the Dancer object and Event object to the constructor. The constructor creates the association between Dancer object and Event object. Association classes will be discussed in detail later in this chapter.
+
+Querying an Association
+
+We can query an association for two different purposes. They are:
+1. To check for the existence of an association.
+2. To find out which object is associated for a given object.
+
+Case 1: Checking to see if the relationship exists:
+
+We can add an operation called isTeamMember() to the Dancer class to check if the Dancer is on a team or not. But we will not know the name of the team.
+ 
+Case 2: Accessing the value of each association:
+
+If we are interested in knowing the value of an association, we can query the association to find out. We can add an operation getGuestName() to the Room object. Given an object, the query tells us which object has an association with it. If we want to query previous association then we can add getPreviousGuestName(String : roomNumber). For example, this can allow us to know which guest had forgotten their belongings.
+
+A dancer can be a member of one or more teams. This model is shown from history over time perspective. It means that a dancer can be part of a team only one at a time but could possibly be a member of many teams over time. Each team consists of at least 2 to at most 10 dancers.
+
+We are not showing the possibility of a dancer not being a member of the team (i.e., in 0..* notation, the case when 0 value is taken by the association) because our application requirements dictate that a dancer has to be part of a team in order to compete in the event.
+
+Changing Associations
+
+Case 1: Go through the associations one at a time and see if there is a need to change the association to a different object. Add an operation to change the association if necessary.
+
+joinTeam() allows the Dancer object to join different teams.
+addDancer() allows the Team object to add different Dancers.
+
+Case 2: Check if an operation that deletes the association is required. This operation is valid only if the multiplicity can take on the value of 0 (0 means no association). Otherwise, the integrity of the artifacts will be lost. 
+
+quitTeam() allows the dancer to leave the team.
+dropDancer() allows the dancer to be removed from the team.
+
+Iteration over Associations
+
+When you have a one to many association in the design class diagram, it gives us a clue that clients may want to iterate over all the objects to do something.
+
+In this example, RoomScheduler object needs to iterate over all the rooms and make a list of all rooms that are clean. Therefore we define a new operation called isClean() in the Room object for this requirement.
+
+Reference Objects and Value Objects
+
+Objects have identity. This is much more important to reference objects than it to value objects.
+
+Reference objects are called so because you will get hold of that object through a reference or pointer in the code. For example it could be a thing like Invoice. The identity is important because of the constraint that there can be only one object to designate an invoice in the real world. All variables that point to this invoice will reference the same invoice object. This means any changes to a particular Invoice object will be seen by all the variables pointing to it.
+
+In order to check if two references to an Invoice is the same you have to compare their identities. If this object is cloned for some reason then we have to synchronize the changes.
+
+In simple terms the Value objects are objects that represent constants. Once they are created they cannot be changed. So they are immutable. We could have many value objects that represent the same object in the real world. For example a Date object that has a value of 21-July-05. We could have an application where two different person might have that date as their birth date. If we had two copies of this particular date object then they can be interchanged. The date object is created when required and destroyed when it is no longer needed.
+
+In order to check if two dates are the same you must compare their values. So an equality test method must be implemented. In this case the method will compare the values of year, month and day for both the objects. The implementation of this method depends on knowing what data must be same for two objects to be the same. 
+
+Let us look at another example where we have a BreadCrumb object that represents the bread crumb of an user's navigation through a web site. In this case, the BreadCrumb object must compare the hyper links of the two BreadCrumb objects to determine if they are the same. The BreadCrumb object is a custom data type and is an example of how you can extend the type system with your own classes.
+
+Value objects are immutable therefore we do not provide any setters. Of course there are always exceptions to any rule. So, if you are using a persistence framework like Hibernate and you want to persist a value object, you could provide a private setter. Each value object is a separate object but sharing is allowed since it will not lead to any bugs in the software due to accidental updates. If you want another date with a different value then instead of updating the existing date object you must create another date object with the required values. This will prevent update of a date object that belongs to some other object leading to bugs in the software.
+
+UML has the term frozen to indicate an immutable object. During modeling you can represent the value objects as attributes and reference objects as associations. This is a general guideline and you could violate this if the resulting model in your problem context conveys the information clearly to others.
+
+In UML Frozen is a constraint that is applicable to an attribute and an association end. It indicates that the value of the frozen attribute or association end cannot change its value once it is created. So the only way to initialize is through the constructor. There can be no setters to change the value.
+
+If frozen is applied to a class it means that all attributes and association ends corresponding to that class can never change.
+
+There is a difference between frozen attribute and a read-only attribute. Read-only means the client code cannot change the value and it may change value due to the implementation inside the class. For example the attribute legalDrinkingAge can be frozen to a value of 21 and this can never change whereas the age attribute can be read-only but it cannot be frozen because it changes with passage of time.
+
+If a new law is passed and the legal age for drinking is changed then it can be changed only by the implementing class and not the client code. As far as the client is concerned the attribute legalDrinkingAge is frozen. The same argument holds if an inadvertant mistake is made in setting the initial value of this variable.
+
+If a class has a mutable object as one of its attribute and we have a setter due to the requirements then the implementation of the setter must clone the mutable object and return it. This will prevent any of the clients accessing the mutable object from accidentally changing its value and introducting bugs in the code. 
+
+Let us look at an example to illustrate this concept. Consider a Reservation object which has check in and check out date as its mutable attributes. There is a semantic constraint imposed by the application requirements that once the guest checks in at a particular date the check in date cannot be changed. The client code can call the getter of the check in date and once it gets the date object it can change its value by calling the setter in the Date object. This will become a bug because it violates the constraint. So eventhough you do not provide a setter for the check in date in the Reservation object the setter in the Date object allows the value to be changed. Since the getter for check in date returns the reference for the check in date object the client code can use this reference to change the value of the check in date. To prevent this bug we must clone the check in date object and return it. Client code can access this value maybe to generate reports but it will not be able to change its value.
+
+ 
+

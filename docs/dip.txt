@@ -1,0 +1,139 @@
+Done
+
+1
+
+1. Read keyboard
+2. Write to terminal
+
+```ruby
+def copy
+ message = gets
+ puts message  
+end
+
+copy
+```
+
+2
+
+```
+$ ruby copy.rb
+Hello
+Hello
+```
+
+3.
+
+# 1. Read tape reader
+# 2. Write to terminal
+
+```ruby
+def read_tape
+  'Input from tape reader'  
+end
+
+def copy(tape_reader = false)
+  if tape_reader
+    message = read_tape
+  else
+    message = gets
+  end
+ puts message  
+end
+
+copy(true)
+```
+
+```
+$ ruby copy.rb
+Input from tape reader
+```
+
+4. 
+
+# 1. Read tape reader
+# 2. Write to paper tape punch
+
+```ruby
+def read_tape
+  p 'Input from tape reader'  
+end
+
+def write_to_paper_tape_punch(output)
+  p 'Output to paper tape punch'  
+end
+
+def copy(tape_reader = false, paper_tape_punch = false)
+  if tape_reader
+    message = read_tape
+  else
+    message = gets
+  end
+  if paper_tape_punch
+    write_to_paper_tape_punch(message)
+  else
+     puts message    
+  end
+end
+
+copy(true, true)
+```
+
+5.
+
+```ruby
+class Copier
+  def initialize(reader, writer)
+    @reader, @writer = reader, writer
+  end
+  
+  def copy
+    message = @reader.read
+    @writer.write(message)
+  end
+end
+
+class KeyboardReader
+  def read
+    gets
+  end
+end
+
+class PrinterWriter
+  def write(output)
+    p "Writing #{output} to printer"
+  end
+end
+```
+
+# Copier now depends on stable interface read and write
+# The implementation of KeyboardReader and PrinterWriter is now hidden behind read and write interface
+
+```ruby
+reader = KeyboardReader.new
+writer = PrinterWriter.new
+
+copier = Copier.new(reader, writer)
+copier.copy
+```
+
+# $ ruby copy.rb
+# This is a test
+# "Writing This is a test\n to printer"
+
+Details should depend on abstractions.
+Abstractions should not depend on details.
+
+Copy 
+Read Keyboard WriterPrinter
+vs
+
+Copy
+
+Reader Writer
+KeyboardReader PrinterWriter
+
+The interface in KeyboardReader and PrinterWriter is implicit in Ruby. We conform to the read and write interface instead of explicitly saying we implement those interfaces in the code.
+
+
+

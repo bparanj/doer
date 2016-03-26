@@ -1,0 +1,50 @@
+Objective - Choose good names for classes and methods
+
+Choose Good Names for Classes
+ 
+The name of the class should clearly indicate the abstraction represented by the class. Noun is used to name classes. It should begin with an uppercase letter. The names can be as long as required to make it understandable. For example Ticket is a good class name where Tick is a bad class name for a class that is representing the ticket abstraction. A class that has a name which contains the data structure that it uses internally as part of the name is also a bad naming convention. Because it is exposing the implementation details and violates encapsulation.
+ 
+It is a good idea to name a subclass as Xsuperclass where X denotes the specialization this class implements. For example, if the superclass is ClubMember, a good name for a class that represents the specific type of ClubMember in a club for golfers would be GolfClubMember.  This helps developers to quickly know where in the inheritance hierarchy we can find this class.
+ 
+For classes in the domain layer, choose names that correspond to real world entities. This will allow us to directly map the analysis class to classes in the design model thereby resulting in low semantic gap between the domain model and the design model. This makes communicating the design clear.
+
+When we encounter the same definition for two classes during the OO analysis, we need to settle on a common name for the object. The name should be chosen from the real world entities in the problem domain. This will allow us to directly map the analysis class to classes in the design model thereby resulting in low semantic gap between the domain model and the design model. So, we can resolve this conflict by choosing the class name that is close to the problem domain.
+ 
+Choose Good Names for Methods
+ 
+The name of the methods should explicitly tell the reader what it does. It should be meaningful and clear. It should start with a verb. The names can be as long as required to make it understandable. Since the methods are invoked using a class name, part of the name is already available. For example, instead of author.getAuthorBookList(), it is better to have author.getBookList(). If a function returns a value then name the function for the returned value. For example ticket.isAvailable() is a good method name. The question is available?  returns a boolean value.
+ 
+When a class has opposite operations, name them explictly instead of using obscure names. Example: addDancer(), removeDancer().
+ 
+Consistent Abstractions
+ 
+You can look at concepts at several different levels of details. For example let us consider a "Seat" object from a flight reservation system. When you consider the seat in a aircraft, you might be interested in attributes of the seat such as its number, whether it is window or aisle type, and its comfort level such as first class or coach class.
+ 
+public class Seat {
+  public String number;
+  public String location;
+  public String type;
+ 
+  public Seat(String number, String location, String type) {
+     initialize all parameters here...
+  }
+  public String getNumber() { ... }
+  public String getType()  {... }
+  public String getLocation() {...}
+}
+ 
+As a side note, Seat object is immutable because its attributes cannot be changed after it is created. We provide only getters (or accessor) and do not provide settors (or mutator) in the Seat class.
+ 
+If you are considering an abstraction that is about collection of seats as described below then you are viewing the problem domain space at a different level of abstraction.
+ 
+public class Seats {
+  public int totalSeats;
+  public int availableSeats;
+  public int reservedSeats;
+ 
+  public boolean isSeatAvailable () {...}
+  ....
+}
+
+The name of the class representing the abstraction described above should actually be named something that reflects the abstraction it is capturing. Therefore instead of Seats we can call it Seating or SeatAllocation. As a side note, this object falls under the abstract noun concept in the conceptual class category list.
+

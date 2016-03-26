@@ -1,0 +1,124 @@
+Objective - Maintain encapsulation of attributes and visibility of operations effectively
+
+All attributes should be hidden inside a class. As always, there are exceptions to any rule, in this case it is very rare for an attribute to be declared public. The only way for clients to access the attributes within a class is via methods. If clients access the attribute very often then we should re-consider the decision to declare the attribute within the class. Why does someone need it? Is it possible to perform the required operation on the data by the class owning it and provide the service to the clients? If this is possible then we also need to ensure that the operation logically is related to the abstraction that the class represents. Otherwise, move the data to another class and define a new method that operates on it. This increases the cohesion of the class, which is desirable.
+ 
+Encapsulation
+ 
+Encapsulation is achieved by means of information hiding. Information hiding means hiding of all the implementation details of a class from other classes. Data is hidden from the clients and and it can only be accessed through a well defined interface. The interface is well defined in the sense that the interface defined is stable and hides the design decisions that are likely to change. As long as the method does not change its signature and fulfills its contract, the implementation of internal details can change without affecting classes using the method. By doing this we hide the internal data representation as well as the internal complexities of an implementation.
+
+It is closely related to abstraction because encapsulation is the process of hiding the details of an object that do not contribute to its essential characteristics. 
+
+The goal is to eliminate the changes propagating to other classes when changes are made to the class. This isolates the changes to just one class avoiding global changes which makes maintenance easier. 
+
+Encapsulation prevents accidental updates. Allowing direct access to internal data of a class permits any class to change it. Encapsulating the data by allowing access only through methods allows rules to be applied to attempts to change data and prevents accidental updates to invalid or unexpected values. To prevent this, we could return read-only copy of the internal data when a collection class is accessed. The client is not aware whether it is getting a copy or the actual data. This decision is hidden from the client. 
+
+It allows re-use of abstraction without depending on the implementation. Hiding the internal implementation of a class allows an abstraction to be implemented in different ways without affecting the classes that use that abstraction. Classes only depend on the abstraction that has published a stable interface and is not wired to a specific class that implements the abstraction. In other words we program to the interface not the implementation.
+
+Encapsulation also provides opportunities to find simpler and elegant design. This makes code easier to understand. It permits team members to work independently on state and functionality and allows classes to be understood in isolation.
+
+Since encapsulation hides variable that are internal to an algorithm, allowing access to variable only through public methods, the Project Manager can use encapsulation to deal with the complexities during the early stages of the project and avoid a maintenance nightmare during later stages of the product life cycle. The Project Manager can make sure that stable interfaces are defined between the different layers of the system in the beginning of the project. This will avoid problems integrating the different layers and enforces consistency in the interaction between layers.
+
+People disagree on the distinction between encapsulation and information hiding. Arguing that encapsulation means bundling of the data and methods together into the same class. This may not necessarily hide the data from external view. From the exam perspective, keep this in mind and use the elimination process to answer any ambiguous questions on encapsulation. 
+
+Visibility
+ 
+One of the primary task during class design is making decisions about which methods should be made public and which must be made private. This is called as visibility. For example, a class might implement 10 methods and expose only 4 of them, the remaining 6 methods are used internally by the class.
+
+Visibility concept differs with languages. So let us briefly discuss some of the visibility concepts that are applicable to Java.
+
+Public elements are visible to any class; private elements are visible only to the owning class and protected elements are visible only to the subclasses.
+
+In UML, attributes or operations can have a visibility indicator. The meaning of the marker is language dependent. So we could have + (public), - (private), and # (protected) for Java.
+ 
+Encapsulation of Attributes
+ 
+A class might use several attributes that cannot be accessed. In this case, the attribute is declared private to the class and no accessor method is provided for other classes to access. During design make the visibility of the attribute as strict as possible i.e., private.
+ 
+Always avoid making an attribute public. An attribute which is declared public violates the encapsulation principle. For example, a Book class with a public int edition declared within the class will make clients free to modify it even without the Book class knowing that it has been changed. However, a Book class that exposes:
+ 
+public int getEdition() {...};
+public void setEdition(int edition) {...};
+ 
+has good encapsulation. The clients do not know whether the implementation uses integer to store the edition or Book is storing the edition as string and converting it to integer. For instance, due to performance / space trade off decisions, it could be implemented differently.
+ 
+This leads us to the rules:
+Do not change the state of an object without going through its public interface.
+Classes should depend only on the public interfaces of other classes. 
+
+Semantic Violation of Encapsulation
+ 
+It is easy to avoid syntactic violation of encapsulation by declaring the internal methods and data private. Some examples of semantic violation of encapsulation are:
+Failure to call database.connect() before calling author.retrieve(database) because you know that the author.retrieve() method will establish a new connection to the database in the absence of a database connection.
+Not calling done() method in class A because you now that performLastOperation() method in class A has already called it.
+Using class B's MAXIMUM_POINTS constant instead of class A.MAXIMUM_POINTS because you know they have the same value.
+Ignoring to call class A's init() method because you know that class A's executeFirstOperation() method automatically calls it.
+All of the examples above makes the client code dependent on the private implementation of a class. One of the main theme of the Design Patterns [GoF] book is that developers should program to an interface. This means we should avoid looking at the implementation of a class to program. When the code is dependent on the implementation, encapsulation is broken and this makes the client code brittle since it has to change whenever modifications to the implementation are made.
+ 
+Inheritance and Encapsulation
+ 
+An element that is coupled to another has a dependency on that other element. If the other element changes, the dependent element may also need to change. A well-designed superclass is not coupled to its subclasses, but a subclass is inextricably tied to its superclass. 
+
+If a super class declares attributes that are visible only to its sub-classes, (in Java we use protected keyword) it results in coupling between them. So, from a strict point of view, Inheritance violates encapsulation. Do not allow the subclasses to access the protected attributes directly. This will avoid maintenance nightmare when the attributes are changed in the super class. At the other extreme you can declare the attributes as private in the superclass, this means the subclasses will not inherit the attributes.  When the derived class needs access to the private attribute declared in the base class provide a protected method that can be used by the sub classes for that purpose.  Changes to the superclass, visible outside that class, are automatically inherited by the subclass without having to change the code of the subclass.
+
+All design decisions require human judgement that solves the problem at hand. You have to weigh the advantages vs. disadvantages for your specific situation before deciding either to follow this rule or not. In this case, some of the things that you may look at are : How many sub-classes are we likely to extend from this super-class? How many attributes require visibility in the sub-classes? Answering these questions will help you to make the trade-offs between different designs. You could also start with the simplest design that will work for your current requirements and refactor the design in each iteration. 
+
+If you are using inheritance and the derived class needs access to the private attribute declared in the base class then provide a protected method that can be used by the sub classes for that purpose.
+
+Arguments and Encapsulation
+ 
+A properly encapsulated class prevents its clients from knowing the implementation details. All the public methods defined in a class is called as the interface of a class.
+ 
+The interface of a class should hide as much implementation details as possible. Therefore, the number of arguments in the interface must be minimal. Because more the number of arguments, the more the clients know about how the class is implementing the functionality behind the signature of the method.
+ 
+Visibility of Operations
+ 
+At the class level this means minimizing the number of methods that are public and available for clients to use. This raises the level of abstraction of the services provided by the class to the correct level. Do not clutter the public interface of a class with methods that users of that class are either not able to use or are not interested in using. Implement a minimal public interface that all classes understand. You can minimize the public interface by following the rule : Do not put implementation details such as common-code private functions into the public interface of a class.
+ 
+Let us look at an example for information hiding. Consider a website dedicated to independent publishers. The system needs to allow profile to be created for the authors. One of the data provided by the author is their age. The system stores the age attribute in a class called Author. After a year elapses the profile still shows the same age and the author has not aged at all! By the way this is how Yahoo Profile is implemented.
+ 
+The management now realizes that it is a mistake and wants to provide an operation to calculate age of a given author. The problem is that code has author.age in several different places (direct access to the public age attribute). Now the code has to be modified to author.getAge() and recompiled after the getAge() is implemented. This may not be a critical issue in this system but if it was a retirement fund account which  allows withdrawal of money only after a certain age is reached by the member then it is definitely a critical issue. This leads to the rule: All data should be hidden (private) within its class.
+ 
+Information hiding is useful for not only attributes and operations but also for class design and sub system design. Let us look at different type of information hiding example for an attribute. In MyTicketCo system the maximum number of tickets that can be purchased is 50. Therefore do not use 50 in the code, instead define a constant MAXIMUM_TICKETS to hide the information in one place. This makes it easy to change since it is found in only one place. This leads to the rule: Always use named constants instead of using literals.
+ 
+Encapsulation at System Level
+ 
+In subsystem design we minimize the number of classes exposed to the clients to provide a minimal interface. If this is not possible we use a Facade [GoF].
+ 
+Coupling and its Relation to Encapsulation
+ 
+Coupling is a quality metric used to describe amount of interconnection between classes as well as between methods. It is basically a measure of amount of encapsulation. Coupling is applicable to both classes and methods. A loosely coupled system is considered good. It has classes and methods that are independent. Users of a class must be dependent on its public interface, but a class should not be dependent on its clients, as this increases coupling.
+ 
+Lower the number of connections, the better is the coupling. So a method that takes one parameter is better than a method that takes four parameters. A class with five well defined methods is better than a class that exports 10 public methods (assumes that both are representing the same abstraction).
+ 
+The amount of knowledge required to use a method must be kept to a minimum. Suppose we have a method that does a search for all the books published by a particular author given a last name and a first name. The name of this method is listBooksbyAuthor(). Let us say that in another module we have an Author object that contains the last name and the first name, among other attributes, and that module passes the object to listBooksbyAuthor(). There is only one connection between the interacting modules due to dependency on Author object. It looks like a loosely coupled system. Let us now consider a situation where we need to use a listBooksbyAuthor() method from another module that does not have an Author object but that does have the last name and first name. The method listBooksbyAuthor() in this situation becomes very difficult to use without knowing how the method is implemented. The third module has to know about Author class in order to use the listBooksbyAuthor() method (know is emphasized to indicate the need for an association). Another solution is to change signature of the method listBooksbyAuthor(), so that it takes last name and first name instead of Author.
+
+This solution is a good fix. It is now easier to use this method by other modules. The solution has eliminated the dependency on Author object and is more loosely coupled. To summarize the more loosely coupled a module is, the more easily other modules can call a module.
+ 
+The worst type of coupling is the semantic coupling. In this type of coupling a module makes use of semantic knowledge of another module's implementation. Examples for this type of coupling is given below:
+ 
+Example 1 : A module passes a control flag to another module that tells the called module what to do. in this case the calling module makes assumptions about the implementation of the called module.
+ 
+Example 2 : A module uses global data that has been modified by another module. Assumption is made that modification has been done at the right time.
+ 
+Example 3 : A module knows from the documentation that it has to explicitly call initialize() operation before invoking an operation foo(). But it deliberately fails to call initialize since it knows that foo() will call initialize anyways.
+ 
+Example 4 : Before passing an object as an argument, a module initializes only the attributes that are used by methods that operate on them. It knows what attributes are used by what methods and what methods will actually be required by the called module.
+ 
+Example 5 : A module passes a BaseObject to another module. The called module knows that it was actually DerivedObject that has been passed to it, so it happily does a downcast of BaseObject to DerivedObject and invokes methods that are specific to DerivedObject.
+ 
+This type of coupling can result in code breaking in the module violating the encapsulation and information hiding principles whenever changes are made in the module that passes the BaseObject.
+ 
+Guidelines for Encapsulation
+ 
+1. Avoid making assumptions about the clients.
+ 
+Interface of a class is a contract between the developer of the class and the clients that use the class. There should be no assumption about how the clients will or will not use the class. Example: Comments shown below makes it obvious that the class is aware of its clients.
+ 
+/* initialize salary to 1 because PayRoll class will throw a NullPointerException if it is initialized to 0. */
+ 
+2. Prefer programmatic interfaces over a semantic interface
+ 
+Each interface has two parts, a programmatic and a semantic part. Anything that can be enforced by the compiler is called programmatic part. An example is - data type of a parameter passed to a method. The semantic part refers to the assumptions about how the interface will be used. This cannot be enforced by the compiler. An example is "method A must be called before method B".
+ 
+Convert semantic interface elements to programmatic interface elements by using techniques such as Assertion (DBC). If this is not possible the final option is to document the semantic interface in comments within the code and use tools to extract these comments to make it part of the API documentation. For example Javadoc can be use for this purpose. Keep in mind that the number of interfaces depending on documentation should be minimal. 
+

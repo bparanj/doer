@@ -1,0 +1,94 @@
+Objective - Create, interpret and exploit interfaces
+
+Interface is a term that is used to indicate the public operations that is declared on a class as well as the interface construct that is available in OO languages.
+
+Interfaces specify only the contract that has to be implemented by the class that implements the interface. Interfaces do not define any default implementation.
+
+UML interface is a collection of public operations used to specify a service of a class or a component. It specifies a service the supplier provides and that other elements can request. It has no method bodies or attributes. It is defined as a stereotype of class and is shown in diagrams as <<interface>>. It corresponds to interfaces in COM and CORBA as well as Java.
+
+Realization indicates that one class implements behavior specified by an interface or an abstract class. The realizing class must conform to the interface but is not required to use inheritance.
+
+In a dependency relationship if the interface changes the client code will be affected and has to change. Dependencies must be minimized to minimize the effects of changes.
+
+An alternative notation to show interfaces is the lollipop notation. The limitation of using this notation is that we cannot show the operations in the interface or the generalization relationships between interfaces. Show the diagram here...
+
+Discuss the difference between interfaces and abstract classes here. Check if it has already been discussed.
+
+One of the main theme of Design Patterns book by Gang of Four is program to interface and not to implementation.
+
+Following this rule results in a flexible system.
+
+Consider the following code :
+
+foo()
+{ 
+        Vector dogList = new Vector();
+         ...
+         bar(dogList);
+
+}
+
+bar(Vector dogList)
+{
+        dogList.remove(deadDog);
+        fooBar(dogList);
+}
+
+If we have to change the data structure Vector that is used to something that offers better performance in the future, let us say HashMap then we have to modify the foo() method, bar method which takes this as an argument and the fooBar method which also takes this as an argument.
+
+Now consider the code that is rewritten to an interface as shown below:
+
+foo()
+{ 
+        Collection dogList = new Vector(); // Collection is an interface in Java
+         ...
+         bar(dogList);
+
+}
+
+bar(Collection dogList)
+{
+        dogList.remove(deadDog);
+        fooBar(dogList);
+}
+
+This makes it easy to make changes as illustrated below:
+
+foo()
+{ 
+        Collection dogList = new HashMap(); // This is the only change made to the code
+         ...
+         bar(dogList);
+
+}
+
+bar(Collection dogList)
+{
+        dogList.remove(deadDog);
+        fooBar(dogList);
+}
+
+Since HashMap implements the Collection interface, the change is now localized to just one place in the code.
+
+Interfaces define types and when implemented can be anywhere in the class hierarchy. Therefore interfaces gives us much more flexibility. In our example as long as a class implements the Collection interface, regardless of which class hierarchy it is located, it can be used in our example code. It will work with the same amount of changes made (as shown earlier in the above example).
+
+If the abstractions are just roles that objects play then we can use interfaces to represent the roles so that they can be dynamic.
+
+Example
+
+Here is the partial design for Automated Front Desk Assistant.
+
+A snippet of code for this implementation is shown below:
+
+public class RegularReceiptVisitor {
+
+    public void printRoomCharges(Describable aVar) {
+        aVar.getDescription();
+        aVar.getQuantity();
+        aVar.getPrice();
+        // format and print the expense item to the printer
+
+    }
+
+While both Entertainment and Accomodation could be used as the parameter to the printRoomCharges method, it is better to use the interface Describable as the type of the parameter. This choice exploits polymorphism to provide additional flexibility by determining the actual class at runtime. So not only Entertainment and Accomodation classes can be used but also any class that implements the Describable interface.
+

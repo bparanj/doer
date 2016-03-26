@@ -1,0 +1,62 @@
+Objective - Recognize and exploit polymorphism
+
+Introduction
+
+We have to understand dynamic binding and static binding before we can discuss inheritance.
+
+Dynamic Binding
+ 
+Dynamic binding is a mechanism where a variable is associated with an object during run-time (when the system is executing). The system gains the capability to dynamically decide which method to use by checking the object type. For instance, consider the Piano and Drum classes that have a play() method. The system is knowledgeable to select the right method by using dynamic binding and polymorphism. This is also known as late binding. In layman’s terms, it is not possible for an individual to determine which method will be executed by looking at the code. This basically appears as method over-riding (same method with different implementations in the sub-classes) in the code.
+ 
+Static Binding
+ 
+Static binding is a mechanism where a variable is associated with an object at compile-time. The system has the ability to select the right method by checking the declaration of an object. This is also known as early binding. This basically appears as method over-loading (same method name with different arguments) in the code. Therefore, it is possible for an individual to determine which method will be executed at run-time by simply reading the code.
+ 
+Polymorphism
+ 
+Polymorphism is the state of being able to assume different forms. So when you have methods with the same name but with different method signature, you have the compile time polymorphism. Another type of polymorphism is run-time polymorphism. It is a powerful mechanism in which a variable can refer to different objects, which implement the method(s) in their own way. For instance, consider a MusicalInstrument base class that defines an abstract method called play() and subclasses Piano and Drum object. An instance variable called muscialInstrument used in the client code can hold a Piano or Drum object at different times. Regardless of the type of object the variable is associated with at any given time, we can send a play() message.
+ 
+Polymorphism in combination with dynamic binding eliminates type specific code such as the switch statement, if-else etc. This makes maintenance of the code easier and improves the quality of the code.
+Up-casting refers to assigning an object to a variable declared as a super-type of that object. This is desirable as it allows alternative behavior based on the runtime type of the object. This is preferable to using conditional statements to test the type of the object to determine its behavior, since each new variation that arises will require changes to the logic. If a new variation on an operation is required, a new subtype is created to encapsulate that variation and the existing code does not need to change. So, new subclasses with varying behavior can be added to the inheritance hierarchy.
+
+Down-casting refers to assigning an object to a variable declared as a sub-type of that object. Down-casting is simply called as casting. We cast from a base class to a more specific class. It asserts that the variable is a more specific extended object. e.g. Drum d = (Drum) aMusicalInstrument. Polymorphism makes down-casting unnecessary, since the behavior is determined by the object's runtime type, not by the type of the variable that references it.
+
+Exploiting Polymorphism
+
+Inheritance should be used only to model a generalization / specialization hierarchy. Inheritance checklist:
+
+Does the relationship model is a special kind of and not is a role played by a ?
+The object should never need to transmute to become an object of some other class.
+The class should extend rather than override or nullify the behavior of the superclass (Liskov Substitution Principle – the subclass should be substitutable for the superclass).
+Do not subclass what is merely a utility class.
+If two or more classes share only common data (no common behavior), do not include them in an inheritance hierarchy.  Instead, move the common data into a class that will be contained by each sharing class.
+If two or more classes share common data and behavior (i.e., methods) then those classes should each inherit from a common base class that captures those data and methods.
+If two or more classes share only a common interface (i.e., messages not data) then they should inherit from a common base class only if they will be used polymorphically.
+Explicit testing of the type of an object is usually a symptom of bad design. The designer should instead exploit polymorphism. Derived classes must have knowledge of their base class by definition, but base classes should not know anything about their derived classes. All abstract classes must be base classes and vice-versa. Factor the commonality of data, behavior and / or interface as high as possible in the inheritance hierarchy.
+
+Hers is a list of valid reasons to partition a class into a subclass:
+
+The subclass has additional attributes of interest.
+The subclass has additional associations of interest.
+The subclass concept is operated on, handled, reacted to, or manipulated differently than the superclass or other subclasses in ways that are of interest.
+The subclass concept represents an animate thing (for example, animal, robot) that behaves differently that the super class or other subclasses in ways that are of interest.
+Inheritance Design Guidelines
+
+If you think you need to create new classes at runtime, take a step back and realize that what you are trying to create are objects.
+It should be illegal for a derived class to override a base class method with a no operation method as this violates the Liskov’s Substitution Principle.
+Do not confuse optional containment with need for inheritance. Modeling optional containment with inheritance will lead to proliferation of classes.
+
+Case Study
+
+Consider the following statements from the customer on a project.
+
+“A Graduate student works on campus cafeteria as a cashier. He is enrolled as a Full Time graduate student and also works as a Graduate Teaching Assistant in the Electrical Engineering Department.”
+
+Composition combined with interface inheritance is the best way to describe this scenario. The Person class represents the graduate student. The roles played by the Graduate Student are Cashier, Graduate Teaching Assistant & Full Time Student. This means this particular class transmutes and can be effectively modeled by combination of composition 
+associated with a Role, interface inheritance of the Role gives the different roles that this class plays. That is, at various times the instance can assume the behavior of any of its roles.
+
+PersonRole is modeled as an interface that is implemented by the following classes: 
+FullTimeStudent, GraduateTeachingAssistant and Cashier, and has a composition relationship to the Person class. The behavior of Person is delegated to the runtime implementation of PersonRole. It is composition rather than a simple association to indicate the reliance of the PersonRole on the existence of the Person. It has a cardinality of 0..1 since the Person can be in only one role at a time.
+
+
+

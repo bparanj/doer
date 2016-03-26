@@ -1,0 +1,72 @@
+Link Building on Railscast
+
+E1 - SQL Caching (Caching Database Results in Rails 4.2.5)
+E2 - Dynamic Attribute Based Finders in Rails 4.2
+E3 - Find Through Association
+E4 - Active Record Basics
+E5 - Chaining ActiveRecord::Relation Methods in Rails 5
+E6 - Shortcut Blocks with Symbol to_proc in Rails 5
+E7 - Layouts in Rails 5
+E8 - Layouts and Content For Tag in Rails 5
+E9 - Filtering Sensitive Parameters from Log Files in Rails 5
+E10 - Refactoring User Name in Rails 5 App 
+E11 - Model Tests in Rails 5
+E12 - Combined into the E11
+E13 - Dangers of Model in Rails 5 Session 
+E14 - Performing Calculations on Models in Rails 5
+E15 - Rails 5 ActiveRecord where, find_by, or, not and Eager Loading
+E16 - Virtual Attributes in Rails 5
+
+
+
+This episode has been updated for Rails 5 as a blog post. []( '')
+ 
+
+ 
+
+Pipeline for Rubyflow
+
+Pimp My RailsCast Episode 17
+The seventeenth episode of Railscast is now updated to Rails 5 as a blog post. Learn all about <a href=''> </a>
+
+
+
+1
+
+In Gemfile development group, add the rails_best_practices gem:
+
+group :development do
+  gem 'sqlite3'
+  gem 'quiet_assets'
+  gem 'thin'
+  gem 'rails_best_practices'
+end
+
+2
+
+rails_best_practices .
+
+3
+
+Add index to an existing column.
+
+class AddIndexToPayments < ActiveRecord::Migration
+  def change
+    add_index :payments, :customer_id
+    add_index :payments, :product_id
+  end
+end
+
+What happens to the old data after creating an index on a foreign column in MySQL ?
+
+
+4
+
+Do not follow the rails_best_practices that says : Remove unused variable for form_for(@article). The reason is that when you use form partial to render a blank form and the form to edit, we need to instantiate an empty form for creating new record and load the existing record for editing. So, eventhough the variable is not 
+
+
+
+
+
+
+

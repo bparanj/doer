@@ -1,3 +1,6 @@
+Episode 2
+
+Dynamic Attribute Based Finders in Rails 4.2 
 
 1. rails new doer
 2. rails g scaffold task name:string complete:boolean
@@ -17,9 +20,7 @@ Task.create(name: 'Dance in the rain', complete: true)
 
 rails c
 Loading development environment (Rails 4.2.5.2)
-2.3.0 :001 > Task.find(:all, conditions: ['complete = ?, false])
-2.3.0 :002'> ^C
-2.3.0 :002 > Task.find(:all, conditions: ['complete = ?', false])
+ > Task.find(:all, conditions: ['complete = ?', false])
   Task Load (0.2ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."id" IN (NULL, NULL)
 ActiveRecord::RecordNotFound: Couldn't find all Tasks with 'id': (all, {:conditions=>["complete = ?", false]}) (found 0 results, but was looking for 2)
 
@@ -34,7 +35,7 @@ Dynamic attribute-based finders
 
 $ rails c
 Loading development environment (Rails 4.2.5.2)
-2.3.0 :001 > task = Task.find_by(complete: false)
+ > task = Task.find_by(complete: false)
   Task Load (0.3ms)  SELECT  "tasks".* FROM "tasks" WHERE "tasks"."complete" = ? LIMIT 1  [["complete", "f"]]
  => #<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56"> 
  
@@ -46,9 +47,8 @@ Loading development environment (Rails 4.2.5.2)
   incomplete_tasks = Task.where(complete: false)
   Task Load (2.1ms)  SELECT "tasks".* FROM "tasks" WHERE "tasks"."complete" = ?  [["complete", "f"]]
  => #<ActiveRecord::Relation [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">, #<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">]> 
-2.3.0 :005 > incomplete_tasks.class
- => Task::ActiveRecord_Relation 
-2.3.0 :006 > incomplete_tasks.to_a
+
+ > incomplete_tasks.to_a
  => [#<Task id: 1, name: "Get rich quick", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">, #<Task id: 3, name: "Buy a puppy", complete: false, created_at: "2016-03-04 21:50:56", updated_at: "2016-03-04 21:50:56">] 
  
 9.
