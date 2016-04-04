@@ -59,7 +59,7 @@ Use cases and conceptual class category lists provide the inspiration for concep
 Example
 
 Intention is the term that describes the business concept of a class in a domain model. The domain model shows conceptual classes that provide the vocabulary of the domain. Each conceptual class can be thought of in terms of its:
-Symbol - The words or images used to represent it, such as its name or UML notation, e.g., a Theatre Ticket.
+Symbol - The words or images used to represent it, such as its name, e.g., a Theatre Ticket.
 Intention - A textual definition describing its business concept, the real world thing it represents, e.g., "A Theatre Ticket represents the right to attend a performance in a particular theatre. It has a seat number, a date, and a time."
 Extension - The set of all the things it applies to, e.g., all the Theatre Tickets issued by a particular Theatre. 
 Role Names
@@ -70,11 +70,14 @@ Role names can be used to describe association and aggregation relationships, ei
 
 
 The CASE tools can generate code for the above model, it would look like as shown below:
+
+```java
 class Man {
     private Woman wife;
 ....
 
 }
+```
 
 The figure shows Woman with a role name of "wife". When generating code, CASE tools use role names as variable names for reference attributes. If you don't specify the role name then the name of the target class becomes the name of the association end. In the example above, if the role name was not specified then the Woman end of the association from Man would be called as woman. This gives you the ability to trace requirements both forward and backward through OOAD artifacts. 
 
